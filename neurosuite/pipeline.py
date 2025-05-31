@@ -1,0 +1,43 @@
+from neurosuite.datasets import load_dataset
+from neurosuite.features import EEGFeatures
+from neurosuite.modeling import EEGModel
+from neurosuite.domain import CORAL
+
+class EEGPipeline:
+    def __init__(self, config, cross_subject=False):
+        self.config = config
+        self.cross_subject = cross_subject
+        self.X, self.y, self.groups = None, None, None
+        self.features = None
+        self.model = None
+        self.results = None
+
+    def load_data(self):
+        self.X, self.y, self.groups = load_dataset(self.config["dataset"])
+        return self
+
+    def preprocess(self):
+        # Placeholder for full preprocessing logic
+        # Additional steps like ICA, CAR, filtering, etc., go here
+        return self
+
+    def extract_features(self):
+        fe = EEGFeatures(self.config)
+        self.features = fe.transform(self.X)
+        return self
+
+    def adapt(self):
+        if self.config.get("use_coral"):
+            self.features = CORAL().fit_transform(self.features, self.groups)
+        return self
+
+    def fit(self):
+        self.model = EEGModel(self.config["model"])
+        self.results = self.model.train(self.features, self.y, self.groups, self.cross_subject)
+        return self
+
+    def evaluate(self):
+        return self.results
+
+    def run_all(self):
+        return self.load_data().preprocess().extract_features().adapt().fit().evaluate()
