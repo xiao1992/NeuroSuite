@@ -19,11 +19,10 @@ It is an open-source Python toolkit for EEG modeling, built for both cognitive n
 ---
 
 ## Installation
-Development mode:
 ```bash
+#Development mode:
 pip install -e .
 
-Direct GitHub install (non-editable):
-```bash
+#Direct GitHub install (non-editable):
 pip install git+https://github.com/your-username/NeuroSuite.git
 pip install -e .
