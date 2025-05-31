@@ -1,0 +1,20 @@
+name = "neurosuite"
+version = "0.1.0"
+description = "EEG preprocessing and ML modeling toolkit with GUI framework."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+dependencies = [
+    "numpy",
+    "scipy",
+    "scikit-learn",
+    "xgboost",
+    "shap",
+    "mne",
+    "streamlit",
+    "matplotlib"
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
