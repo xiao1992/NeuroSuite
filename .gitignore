@@ -1,0 +1,24 @@
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*.so
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Environment and virtualenvs
+.env
+.venv/
+*.env
+
+# Dataset cache
+datasets/
+*.zip
+*.npz
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Streamlit temporary files
+.streamlit/
