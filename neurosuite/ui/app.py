@@ -17,15 +17,21 @@ cross_subject = st.sidebar.checkbox("Cross-Subject Validation", value=True)
 
 if st.sidebar.button("Run Pipeline"):
     config = {"dataset": dataset, "model": model, "use_coral": use_coral}
-    st.info("Loading and processing data...")
-
     pipeline = EEGPipeline(config=config, cross_subject=cross_subject)
+
     try:
+        st.info("🔄 Loading and processing data...")
         results = pipeline.run_all()
-        st.success("✅ Pipeline completed successfully！")
+
+        st.success("✅ Pipeline completed successfully!")
         st.metric("Mean", f"{results['mean_accuracy']:.3f}")
         st.metric("Std", f"{results['std_accuracy']:.3f}")
         st.line_chart(results["cv_scores"])
+
     except FileNotFoundError as e:
         st.error(str(e))
+
+    except Exception as e:
+        st.error(f"🚨 Unexpected error: {str(e)}")
+
 
