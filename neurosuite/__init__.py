@@ -1,7 +1,7 @@
 __version__ = "0.1.0"
 
 from .pipeline import EEGPipeline
-from .features import extract_bandpower
+from .features import EEGFeatures
 from .modeling import EEGModel
 from .datasets import load_dataset
 from .domain import CORAL
