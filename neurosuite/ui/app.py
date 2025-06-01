@@ -20,11 +20,12 @@ if st.sidebar.button("Run Pipeline"):
     st.info("Loading and processing data...")
 
     pipeline = EEGPipeline(config=config, cross_subject=cross_subject)
-    results = pipeline.run_all()
+    try:
+        results = pipeline.run_all()
+        st.success("✅ Pipeline completed successfully！")
+        st.metric("Mean", f"{results['mean_accuracy']:.3f}")
+        st.metric("Std", f"{results['std_accuracy']:.3f}")
+        st.line_chart(results["cv_scores"])
+    except FileNotFoundError as e:
+        st.error(str(e))
 
-    st.success("✅ Pipeline Complete!")
-    st.write("### Accuracy")
-    st.metric("Mean", f"{results['mean_accuracy']:.3f}")
-    st.metric("Std", f"{results['std_accuracy']:.3f}")
-
-    st.line_chart(results["cv_scores"])
