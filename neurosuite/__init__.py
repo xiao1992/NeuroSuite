@@ -3,12 +3,10 @@
 __version__ = "0.1.0"
 
 from .pipeline import EEGPipeline
-from .features import EEGFeatures
+from .features import extract_bandpower
 from .modeling import EEGModel
-from .interpretation import EEGExplainer
-from .graphs import EEGTemporalGraph
-from .visualization import plot_shap_topomap
 from .datasets import load_dataset
-from .selection import ElectrodeSelector
 from .domain import CORAL
-from .ui import run_gui
+from .interpretation import explain_model, plot_shap_topomap
+from .selection import ElectrodeSelector
+from .visualization import plot_trial
