@@ -20,8 +20,11 @@ if st.sidebar.button("Run Pipeline"):
     pipeline = EEGPipeline(config=config, cross_subject=cross_subject)
 
     try:
+        # Try dataset loading only to validate existence
+        _ = pipeline.load_data()
+
         st.info("🔄 Loading and processing data...")
-        results = pipeline.run_all()
+        results = pipeline.preprocess().extract_features().adapt().fit().evaluate()
 
         st.success("✅ Pipeline completed successfully!")
         st.metric("Mean", f"{results['mean_accuracy']:.3f}")
@@ -33,5 +36,6 @@ if st.sidebar.button("Run Pipeline"):
 
     except Exception as e:
         st.error(f"🚨 Unexpected error: {str(e)}")
+
 
 
