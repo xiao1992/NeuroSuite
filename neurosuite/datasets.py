@@ -1,45 +1,60 @@
 import os
 import numpy as np
+from scipy.io import loadmat
 
 def load_dataset(name):
-    if name.lower() == "deap":
-        return load_deap()
-    elif name.lower() == "seed":
-        return load_seed()
-    elif name.lower() == "openneuro":
-        return load_openneuro()
+    name = name.lower()
+    if name == "deap":
+        return load_generic("deap", "https://www.eecs.qmul.ac.uk/mmv/datasets/deap/")
+    elif name == "seed":
+        return load_generic("seed", "https://bcmi.sjtu.edu.cn/~seed/index.html")
+    elif name == "openneuro":
+        return load_generic("openneuro", "https://openneuro.org/")
+    elif name == "custom":
+        raise ValueError("Custom upload should be handled separately via `load_custom_file()`.")
     else:
-        raise ValueError(f"Unknown dataset: {name}")
+        raise ValueError(f"Unknown dataset name: {name}")
 
-def load_deap():
-    file_path = "datasets/deap_data.npz"
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(
-            "❌ DEAP dataset not found.\n"
-            "👉 Please download it from https://www.eecs.qmul.ac.uk/mmv/datasets/deap/\n"
-            "and place the file as: datasets/deap_data.npz"
-        )
-    data = np.load(file_path, allow_pickle=True)
-    return data["X"], data["y"], data["groups"]
+def load_generic(dataset_name, download_url):
+    npz_path = f"datasets/{dataset_name}_data.npz"
+    mat_path = f"datasets/{dataset_name}_data.mat"
 
-def load_seed():
-    file_path = "datasets/seed_data.npz"
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(
-            "❌ SEED dataset not found.\n"
-            "👉 Please download it from https://bcmi.sjtu.edu.cn/~seed/index.html\n"
-            "and place the file as: datasets/seed_data.npz"
-        )
-    data = np.load(file_path, allow_pickle=True)
-    return data["X"], data["y"], data["groups"]
+    if os.path.exists(npz_path):
+        data = np.load(npz_path, allow_pickle=True)
+        return data["X"], data["y"], data["groups"]
 
-def load_openneuro():
-    file_path = "datasets/openneuro_data.npz"
-    if not os.path.exists(file_path):
+    elif os.path.exists(mat_path):
+        mat = loadmat(mat_path)
+
+        # Fallback keys depending on the dataset structure
+        X = mat.get("X") or mat.get("data")
+        y = mat.get("y") or mat.get("labels") or np.zeros(X.shape[0])
+        groups = mat.get("groups") or mat.get("subjs") or np.zeros(X.shape[0])
+
+        return X, y, groups
+
+    else:
         raise FileNotFoundError(
-            "❌ OpenNeuro dataset not found.\n"
-            "👉 Please visit https://openneuro.org/ to select a dataset, download it,\n"
-            "and place the file as: datasets/openneuro_data.npz"
+            f"❌ {dataset_name.upper()} dataset not found.\n"
+            f"👉 Please download it from: {download_url}\n"
+            f"Then place one of the following files in the 'datasets/' folder:\n"
+            f"📁 datasets/{dataset_name}_data.npz (preferred NumPy format)\n"
+            f"📁 OR datasets/{dataset_name}_data.mat (original MATLAB format)"
         )
-    data = np.load(file_path, allow_pickle=True)
-    return data["X"], data["y"], data["groups"]
+
+def load_custom_file(uploaded_file):
+    if uploaded_file.name.endswith(".npz"):
+        data = np.load(uploaded_file, allow_pickle=True)
+        return data["X"], data["y"], data["groups"]
+
+    elif uploaded_file.name.endswith(".mat"):
+        mat = loadmat(uploaded_file)
+
+        X = mat.get("X") or mat.get("data")
+        y = mat.get("y") or mat.get("labels") or np.zeros(X.shape[0])
+        groups = mat.get("groups") or mat.get("subjs") or np.zeros(X.shape[0])
+
+        return X, y, groups
+
+    else:
+        raise ValueError("❌ Unsupported file type. Please upload a .npz or .mat file.")
