@@ -1,13 +1,5 @@
-
 import os
 import numpy as np
-import scipy.io
-import zipfile
-import tempfile
-from sklearn.preprocessing import StandardScaler
-import mne
-import requests
-import io
 
 def load_dataset(name):
     if name.lower() == "deap":
@@ -17,57 +9,37 @@ def load_dataset(name):
     elif name.lower() == "openneuro":
         return load_openneuro()
     else:
-        raise ValueError(f"Unsupported dataset: {name}")
-
-# -----------------------------------------
-# DEAP Dataset
-# -----------------------------------------
+        raise ValueError(f"Unknown dataset: {name}")
 
 def load_deap():
-    url = "https://www.dropbox.com/s/7a2w9jtu7c56z57/deap_data.npz?dl=1"
-    file_path = fetch_file(url, "deap_data.npz")
+    file_path = "datasets/deap_data.npz"
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(
+            "❌ DEAP dataset not found.\n"
+            "👉 Please download it from https://www.eecs.qmul.ac.uk/mmv/datasets/deap/\n"
+            "and place the file as: datasets/deap_data.npz"
+        )
     data = np.load(file_path, allow_pickle=True)
-    X = data["X"]
-    y = data["y"]
-    groups = data["groups"]
-    return X, y, groups
-
-# -----------------------------------------
-# SEED Dataset
-# -----------------------------------------
+    return data["X"], data["y"], data["groups"]
 
 def load_seed():
-    url = "https://www.dropbox.com/s/9r9tm2tcqseikpc/seed_data.npz?dl=1"
-    file_path = fetch_file(url, "seed_data.npz")
+    file_path = "datasets/seed_data.npz"
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(
+            "❌ SEED dataset not found.\n"
+            "👉 Please download it from https://bcmi.sjtu.edu.cn/~seed/index.html\n"
+            "and place the file as: datasets/seed_data.npz"
+        )
     data = np.load(file_path, allow_pickle=True)
-    X = data["X"]
-    y = data["y"]
-    groups = data["groups"]
-    return X, y, groups
-
-# -----------------------------------------
-# OpenNeuro Dataset (Example: ds002778)
-# -----------------------------------------
+    return data["X"], data["y"], data["groups"]
 
 def load_openneuro():
-    url = "https://www.dropbox.com/s/3f7s9sxy2trdn58/openneuro_data.npz?dl=1"
-    file_path = fetch_file(url, "openneuro_data.npz")
+    file_path = "datasets/openneuro_data.npz"
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(
+            "❌ OpenNeuro dataset not found.\n"
+            "👉 Please visit https://openneuro.org/ to select a dataset, download it,\n"
+            "and place the file as: datasets/openneuro_data.npz"
+        )
     data = np.load(file_path, allow_pickle=True)
-    X = data["X"]
-    y = data["y"]
-    groups = data["groups"]
-    return X, y, groups
-
-# -----------------------------------------
-# Download + Cache Utility
-# -----------------------------------------
-
-def fetch_file(url, filename, cache_dir="datasets"):
-    os.makedirs(cache_dir, exist_ok=True)
-    local_path = os.path.join(cache_dir, filename)
-    if not os.path.exists(local_path):
-        print(f"📥 Downloading {filename}...")
-        r = requests.get(url)
-        with open(local_path, "wb") as f:
-            f.write(r.content)
-    return local_path
+    return data["X"], data["y"], data["groups"]
