@@ -3,7 +3,7 @@ from neurosuite.datasets import load_dataset, load_custom_file
 from neurosuite.pipeline import EEGPipeline
 
 st.set_page_config(page_title="NeuroSuite", layout="centered")
-st.title("🧠 NeuroSuite: EEG Modeling Toolkit")
+st.title("NeuroSuite: EEG Modeling Toolkit")
 
 # Sidebar configuration
 st.sidebar.title("⚙️ Settings")
