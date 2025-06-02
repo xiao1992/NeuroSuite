@@ -52,9 +52,14 @@ if st.sidebar.button("Run Pipeline"):
     config = {"dataset": dataset, "model": model, "use_coral": use_coral}
     
     try:
-        st.info("🔄 Loading and processing data...")
+        # Only show loading message AFTER confirming file exists
         pipeline = EEGPipeline(config=config, cross_subject=cross_subject)
-        results = pipeline.run_all()
+        # This line will raise FileNotFoundError if missing
+        pipeline.load_data()  
+        
+        st.info("🔄 Loading and processing data...")
+
+        results = pipeline.preprocess().extract_features().adapt().fit().evaluate()
 
         st.success("✅ Pipeline completed successfully!")
         st.metric("Accuracy (Mean)", f"{results['mean_accuracy']:.3f}")
@@ -67,3 +72,4 @@ if st.sidebar.button("Run Pipeline"):
         st.error(str(e))
     except Exception as e:
         st.error(f"🚨 Unexpected error: {e}")
+
