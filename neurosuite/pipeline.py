@@ -11,6 +11,12 @@ class EEGPipeline:
         self.features = None
         self.model = None
         self.results = None
+        
+    def set_data(self, X, y, groups=None):
+        self.X = X
+        self.y = y
+        self.groups = groups if groups is not None else np.zeros(len(y))
+        return self
 
     def load_data(self):
         self.X, self.y, self.groups = load_dataset(self.config["dataset"])
