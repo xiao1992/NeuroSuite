@@ -1,6 +1,6 @@
 import streamlit as st
 from neurosuite import EEGPipeline
-from neurosuite.datasets import load_dataset, load_custom_file, load_multisubject_odors
+from neurosuite.datasets import load_dataset, load_custom_single, load_custom_multi
 
 st.set_page_config(page_title="NeuroSuite GUI", layout="wide")
 st.title("🧠 NeuroSuite: EEG Processing & Modeling")
@@ -8,13 +8,13 @@ st.title("🧠 NeuroSuite: EEG Processing & Modeling")
 # Sidebar options
 st.sidebar.header("Configuration")
 dataset = st.sidebar.selectbox("Select Dataset", ["DEAP", "SEED", "OpenNeuro", "Custom Single File", "Custom Multi-File"])
-model = st.sidebar.selectbox("Select Model", ["SVM", "RandomForest", "XGBoost"])
+model = st.sidebar.selectbox("Select Model", ["svm", "rf", "xgb"])
 cross_subject = st.sidebar.checkbox("Cross-subject evaluation", value=True)
 use_coral = st.sidebar.checkbox("Use CORAL adaptation", value=False)
 
 # Upload blocks
 uploaded_file = None
-custom_files = []
+uploaded_files = []
 meta_file = None
 custom_key_map = {}
 
@@ -45,17 +45,32 @@ if dataset == "Custom Single File":
             custom_key_map["groups"] = g_key
 
 elif dataset == "Custom Multi-File":
-    custom_files = st.sidebar.file_uploader("Upload multiple .mat files", type="mat", accept_multiple_files=True)
+    uploaded_files = st.sidebar.file_uploader("Upload multiple .mat files", type="mat", accept_multiple_files=True)
     meta_file = st.sidebar.file_uploader("Upload metadata CSV (optional)", type="csv")
 
 if st.sidebar.button("Run Pipeline"):
     config = {"dataset": dataset, "model": model, "use_coral": use_coral}
-
-    st.info("🔄 Loading and processing data...") 
+    st.info("🔄 Loading and processing data...")
 
     try:
         pipeline = EEGPipeline(config=config, cross_subject=cross_subject)
-        results = pipeline.run_all()
+
+        if dataset == "Custom Single File":
+            if uploaded_file is None:
+                raise FileNotFoundError("❌ Please upload a valid EEG file.")
+            X, y, groups = load_custom_single(uploaded_file, custom_key_map)
+            pipeline.set_data(X, y, groups)
+
+        elif dataset == "Custom Multi-File":
+            if not uploaded_files:
+                raise FileNotFoundError("❌ Please upload EEG .mat files.")
+            X, y, groups = load_custom_multi(uploaded_files, meta_file)
+            pipeline.set_data(X, y, groups)
+
+        else:
+            pipeline.load_data()
+
+        results = pipeline.preprocess().extract_features().adapt().fit().evaluate()
 
         st.success("✅ Pipeline completed successfully!")
         st.metric("Accuracy (Mean)", f"{results['mean_accuracy']:.3f}")
@@ -68,4 +83,3 @@ if st.sidebar.button("Run Pipeline"):
         st.error(str(e))
     except Exception as e:
         st.error(f"🚨 Unexpected error: {e}")
-
