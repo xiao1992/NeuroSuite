@@ -35,8 +35,8 @@ def load_generic(dataset_name, download_url):
 
     else:
         raise FileNotFoundError(
-            f"❌ {dataset_name.upper()} dataset not found.\n"
-            f"👉 Please download it from: {download_url}\n"
+            f"{dataset_name.upper()} dataset not found.\n"
+            f"Please download it from: {download_url}\n"
             f"Then place one of the following files in the 'datasets/' folder:\n"
             f"📁 datasets/{dataset_name}_data.npz (preferred NumPy format)\n"
             f"📁 OR datasets/{dataset_name}_data.mat (original MATLAB format)"
