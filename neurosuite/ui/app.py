@@ -50,16 +50,12 @@ elif dataset == "Custom Multi-File":
 
 if st.sidebar.button("Run Pipeline"):
     config = {"dataset": dataset, "model": model, "use_coral": use_coral}
-    
-    try:
-        # Only show loading message AFTER confirming file exists
-        pipeline = EEGPipeline(config=config, cross_subject=cross_subject)
-        # This line will raise FileNotFoundError if missing
-        pipeline.load_data()  
-        
-        st.info("🔄 Loading and processing data...")
 
-        results = pipeline.preprocess().extract_features().adapt().fit().evaluate()
+    st.info("🔄 Loading and processing data...") 
+
+    try:
+        pipeline = EEGPipeline(config=config, cross_subject=cross_subject)
+        results = pipeline.run_all()
 
         st.success("✅ Pipeline completed successfully!")
         st.metric("Accuracy (Mean)", f"{results['mean_accuracy']:.3f}")
