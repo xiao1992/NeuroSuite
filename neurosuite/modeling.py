@@ -3,6 +3,7 @@ from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 from sklearn.model_selection import cross_val_score, StratifiedKFold, LeaveOneGroupOut
 import numpy as np
+from sklearn.metrics import make_scorer, accuracy_score, f1_score
 
 class EEGModel:
     def __init__(self, model_name):
@@ -20,13 +21,17 @@ class EEGModel:
 
     def train(self, X, y, groups=None, cross_subject=False):
         if cross_subject and groups is not None:
-            logo = LeaveOneGroupOut()
-            scores = cross_val_score(self.model, X, y, cv=logo, groups=groups)
+            cv = LeaveOneGroupOut()
         else:
             cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-            scores = cross_val_score(self.model, X, y, cv=cv)
+    
+        acc_scores = cross_val_score(self.model, X, y, cv=cv, scoring="accuracy", groups=groups)
+        f1_scores = cross_val_score(self.model, X, y, cv=cv, scoring="f1_weighted", groups=groups)
+    
         return {
-            "mean_accuracy": np.mean(scores),
-            "std_accuracy": np.std(scores),
-            "cv_scores": scores
+            "mean_accuracy": np.mean(acc_scores),
+            "std_accuracy": np.std(acc_scores),
+            "mean_f1": np.mean(f1_scores),
+            "std_f1": np.std(f1_scores),
+            "cv_scores": acc_scores.tolist()  # or f1_scores if preferred in chart
         }
