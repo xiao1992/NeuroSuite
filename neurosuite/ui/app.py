@@ -48,22 +48,13 @@ elif dataset == "Custom Multi-File":
     custom_files = st.sidebar.file_uploader("Upload multiple .mat files", type="mat", accept_multiple_files=True)
     meta_file = st.sidebar.file_uploader("Upload metadata CSV (optional)", type="csv")
 
-# Run Pipeline
 if st.sidebar.button("Run Pipeline"):
     config = {"dataset": dataset, "model": model, "use_coral": use_coral}
-    st.info("🔄 Loading and processing data...")
-
+    
     try:
-        if dataset == "Custom Single File":
-            X, y, groups = load_custom_file(uploaded_file, custom_key_map)
-        elif dataset == "Custom Multi-File":
-            X, y, groups = load_multisubject_odors(custom_files, meta_file)
-        else:
-            X, y, groups = load_dataset(dataset)
-
+        st.info("🔄 Loading and processing data...")
         pipeline = EEGPipeline(config=config, cross_subject=cross_subject)
-        pipeline.set_data(X, y, groups)
-        results = pipeline.preprocess().extract_features().adapt().fit().evaluate()
+        results = pipeline.run_all()
 
         st.success("✅ Pipeline completed successfully!")
         st.metric("Accuracy (Mean)", f"{results['mean_accuracy']:.3f}")
