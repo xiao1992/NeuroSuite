@@ -10,8 +10,10 @@ def load_dataset(name):
         return load_generic("seed", "https://bcmi.sjtu.edu.cn/~seed/index.html")
     elif name == "openneuro":
         return load_generic("openneuro", "https://openneuro.org/")
-    elif name == "custom":
-        raise ValueError("Custom upload should be handled separately via `load_custom_file()`.")
+    elif name == "custom single-file":
+        return load_custom_single()
+    elif name == "custom multi-file":
+        return load_custom_multi()
     else:
         raise ValueError(f"Unknown dataset name: {name}")
 
@@ -42,7 +44,7 @@ def load_generic(dataset_name, download_url):
             f"📁 OR datasets/{dataset_name}_data.mat (original MATLAB format)"
         )
 
-def load_custom_file(uploaded_file):
+def load_custom_single(uploaded_file):
     if uploaded_file.name.endswith(".npz"):
         data = np.load(uploaded_file, allow_pickle=True)
         return data["X"], data["y"], data["groups"]
@@ -59,11 +61,7 @@ def load_custom_file(uploaded_file):
     else:
         raise ValueError("❌ Unsupported file type. Please upload a .npz or .mat file.")
 
-import numpy as np
-import pandas as pd
-from scipy.io import loadmat
-
-def load_multisubject_odors(files, meta_file=None):
+def load_custom_multi(files, meta_file=None):
     X_all, y_all, group_all = [], [], []
     meta = None
 
