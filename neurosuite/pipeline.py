@@ -38,8 +38,19 @@ class EEGPipeline:
         return self
     
     def fit(self):
-        model_name = self.config["model"].lower() 
-        self.model = EEGModel(model_name)
+        # Normalize and map model names
+        name_map = {
+            "svm": "svm",
+            "randomforest": "rf",
+            "xgboost": "xgb"
+        }
+        model_key = self.config["model"].lower().replace(" ", "")
+        mapped_model = name_map.get(model_key)
+    
+        if mapped_model is None:
+            raise ValueError(f"Unsupported model: {self.config['model']}")
+    
+        self.model = EEGModel(mapped_model)
         self.results = self.model.train(self.features, self.y, self.groups, self.cross_subject)
         return self
 
