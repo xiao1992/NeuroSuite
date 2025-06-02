@@ -36,9 +36,10 @@ class EEGPipeline:
         if self.config.get("use_coral"):
             self.features = CORAL().fit_transform(self.features, self.groups)
         return self
-
+    
     def fit(self):
-        self.model = EEGModel(self.config["model"])
+        model_name = self.config["model"].lower() 
+        self.model = EEGModel(model_name)
         self.results = self.model.train(self.features, self.y, self.groups, self.cross_subject)
         return self
 
