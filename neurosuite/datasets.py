@@ -58,3 +58,42 @@ def load_custom_file(uploaded_file):
 
     else:
         raise ValueError("❌ Unsupported file type. Please upload a .npz or .mat file.")
+
+import numpy as np
+import pandas as pd
+from scipy.io import loadmat
+
+def load_multisubject_odors(files, meta_file=None):
+    X_all, y_all, group_all = [], [], []
+    meta = None
+
+    if meta_file is not None:
+        meta = pd.read_csv(meta_file)
+
+    for file in files:
+        filename = file.name
+        mat = loadmat(file)
+
+        if "X_event" not in mat:
+            continue  # Skip if no EEG data
+
+        data = np.transpose(mat["X_event"], (2, 0, 1))  # (N, 250, 216)
+        X_all.append(data)
+
+        # Assign label (y)
+        if meta is not None and filename in meta["filename"].values:
+            label = meta.loc[meta["filename"] == filename, "y"].values[0]
+            y_all.append(np.full(data.shape[0], label))
+        else:
+            y_all.append(np.full(data.shape[0], -1))  # -1 means unlabeled
+
+        # Assign group (subject) from filename prefix
+        subject_id = filename.split("_")[0]  # e.g., 'Subject1'
+        group_all.append(np.full(data.shape[0], subject_id))
+
+    return (
+        np.concatenate(X_all),
+        np.concatenate(y_all),
+        np.concatenate(group_all),
+    )
+
