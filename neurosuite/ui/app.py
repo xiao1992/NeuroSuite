@@ -66,8 +66,10 @@ if st.sidebar.button("Run Pipeline"):
         results = pipeline.preprocess().extract_features().adapt().fit().evaluate()
 
         st.success("✅ Pipeline completed successfully!")
-        st.metric("Mean", f"{results['mean_accuracy']:.3f}")
-        st.metric("Std", f"{results['std_accuracy']:.3f}")
+        st.metric("Accuracy (Mean)", f"{results['mean_accuracy']:.3f}")
+        st.metric("Accuracy (Std)", f"{results['std_accuracy']:.3f}")
+        st.metric("F1 Score (Mean)", f"{results.get('mean_f1', 0):.3f}")
+        st.metric("F1 Score (Std)", f"{results.get('std_f1', 0):.3f}")
         st.line_chart(results["cv_scores"])
 
     except FileNotFoundError as e:
