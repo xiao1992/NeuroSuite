@@ -5,6 +5,7 @@ from sklearn.model_selection import cross_val_score, StratifiedKFold, LeaveOneGr
 import numpy as np
 from sklearn.metrics import make_scorer, accuracy_score, f1_score
 from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
 
 class EEGModel:
     def __init__(self, model_name):
