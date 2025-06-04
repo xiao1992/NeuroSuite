@@ -42,7 +42,11 @@ class EEGPipeline:
         name_map = {
             "svm": "svm",
             "randomforest": "rf",
-            "xgboost": "xgb"
+            "randomforestclassifier": "rf",
+            "rf": "rf",
+            "xgboost": "xgb",
+            "xgb": "xgb",
+            "xgboostclassifier": "xgb"
         }
         model_key = self.config["model"].lower().replace(" ", "")
         mapped_model = name_map.get(model_key)
