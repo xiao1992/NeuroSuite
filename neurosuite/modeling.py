@@ -25,8 +25,8 @@ class EEGModel:
                 StandardScaler(),
                 XGBClassifier(use_label_encoder=False, eval_metric="logloss", random_state=42)
             )
-            else:
-                raise ValueError(f"Unsupported model: {model_name}")
+        else:
+            raise ValueError(f"Unsupported model: {model_name}")
 
     def train(self, X, y, groups=None, cross_subject=False):
         if cross_subject and groups is not None:
