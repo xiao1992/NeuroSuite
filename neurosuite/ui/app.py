@@ -1,6 +1,9 @@
 import streamlit as st
 from neurosuite import EEGPipeline
 from neurosuite.datasets import load_dataset, load_custom_single, load_custom_multi
+from neurosuite.visualization import plot_topomap_class_difference
+from neurosuite.features import compute_band_power
+
 
 st.set_page_config(page_title="NeuroSuite GUI", layout="wide")
 st.title("🧠 NeuroSuite: EEG Processing & Modeling")
@@ -55,13 +58,13 @@ if st.sidebar.button("Run Pipeline"):
 
         if dataset == "Custom Single File":
             if uploaded_file is None:
-                raise FileNotFoundError("❌ Please upload a valid EEG file.")
+                raise FileNotFoundError("Please upload a valid EEG file.")
             X, y, groups = load_custom_single(uploaded_file, custom_key_map)
             pipeline.set_data(X, y, groups)
 
         elif dataset == "Custom Multi-File":
             if not uploaded_files:
-                raise FileNotFoundError("❌ Please upload EEG .mat files.")
+                raise FileNotFoundError("Please upload EEG .mat files.")
             X, y, groups = load_custom_multi(uploaded_files, meta_file)
             pipeline.set_data(X, y, groups)
 
@@ -81,3 +84,23 @@ if st.sidebar.button("Run Pipeline"):
         st.error(str(e))
     except Exception as e:
         st.error(f"🚨 Unexpected error: {e}")
+
+if st.checkbox("Show EEG Topomap (Class Difference)"):
+    class_options = list(set(pipeline.y))
+    class_a = st.selectbox("Class A", class_options, index=0)
+    class_b = st.selectbox("Class B", class_options, index=1)
+    selected_bands = st.multiselect("Bands", ['delta', 'theta', 'alpha', 'beta', 'gamma'], default=['alpha', 'beta'])
+
+    if st.button("Generate Topomap"):
+        st.write(f"Topomap: {class_a} vs {class_b}")
+        plot_topomap_class_difference(
+            X=pipeline.X,
+            y=pipeline.y,
+            class_a=class_a,
+            class_b=class_b,
+            compute_band_power=compute_band_power,
+            bands=selected_bands,
+            sfreq=config.get("sampling_rate", 250),
+            title_prefix="EEG Class Difference"
+        )
+
