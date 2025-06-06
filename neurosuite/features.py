@@ -1,4 +1,3 @@
-# neurosuite/features.py
 
 import numpy as np
 from scipy.signal import welch
@@ -6,14 +5,14 @@ from scipy.signal import welch
 class EEGFeatures:
     def __init__(self, config):
         self.config = config
-        self.fs = 128  # sampling rate
+        self.fs = 128 
 
     def transform(self, X):
         # Input X: shape (samples, time, channels)
         all_features = []
         for trial in X:
             trial_features = []
-            for ch in trial.T:  # loop over channels
+            for ch in trial.T: 
                 freqs, psd = welch(ch, fs=self.fs, nperseg=self.fs)
                 trial_features.extend(self.band_power(psd, freqs))
             all_features.append(trial_features)
