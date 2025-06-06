@@ -8,12 +8,11 @@ It is an open-source Python toolkit for EEG modeling, built for both cognitive n
 ## Key Features
 - Load Popular EEG Datasets (DEAP, SEED, OpenNeuro) with one click
 - Preprocess EEG Signals with built-in filters and epoching including Bandpass filtering (1–40 Hz), Epoching into fixed-length trials (e.g. 2s), Baseline removal, Trial reshaping (samples × time × channels), Group tracking (for cross-subject validation), Notch filtering (50/60 Hz), ICA for artifact removal, Common average referencing, Z-score normalization
-- Extract Features like power spectral density, workload index, entropy, etc.
+- Extract Features like power spectral density, workload index etc.
 - Apply Machine Learning Models (SVM, XGBoost, Random Forest)
 - Cross-Subject Generalization with optional CORAL domain adaptation
-- SHAP Interpretation with visual topomap overlays
-- Electrode Ranking and feature contribution analysis
-- Temporal Graph Construction from EEG epochs
+- (to be updated) SHAP Interpretation with visual topomap overlays
+- (to be updated) Electrode Ranking and feature contribution analysis
 - GUI Interface for no-code usage
 
 ---
