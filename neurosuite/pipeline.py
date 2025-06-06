@@ -1,4 +1,5 @@
 from neurosuite.datasets import load_dataset
+from neurosuite.preprocessing import Preprocessor
 from neurosuite.features import EEGFeatures
 from neurosuite.modeling import EEGModel
 from neurosuite.domain import CORAL
@@ -23,10 +24,10 @@ class EEGPipeline:
         return self
 
     def preprocess(self):
-        # Placeholder for full preprocessing logic
-        # Additional steps like ICA, CAR, filtering, etc., go here
+        pre = Preprocessor(self.config)
+        self.X = pre.transform(self.X)
         return self
-
+    
     def extract_features(self):
         fe = EEGFeatures(self.config)
         self.features = fe.transform(self.X)
