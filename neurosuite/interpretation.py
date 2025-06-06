@@ -9,10 +9,8 @@ def explain_model(model, X, method="tree"):
     return shap_values
 
 def plot_shap_topomap(shap_values, ch_names, info=None, title="SHAP Topomap"):
-    # Aggregate SHAP values across samples and frequencies
     mean_vals = np.mean(np.abs(shap_values.values), axis=0)
 
-    # Optional: reshape if multiple features per channel (e.g., bandpower)
     if mean_vals.shape[0] > len(ch_names):
         ch_scores = np.array_split(mean_vals, len(ch_names))
         ch_scores = [np.mean(bandvals) for bandvals in ch_scores]
