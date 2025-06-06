@@ -32,7 +32,7 @@ class CORAL:
                 Xt_aligned = np.dot(Xt, A_coral)
                 Xt_all.append(Xt_aligned)
             except np.linalg.LinAlgError:
-                print("⚠️ Skipping subject due to non-invertible matrix.")
+                print("Skipping subject due to non-invertible matrix.")
                 continue
 
         X_combined = np.vstack([X_src] + Xt_all)
