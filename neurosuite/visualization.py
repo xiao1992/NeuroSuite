@@ -3,6 +3,7 @@ import numpy as np
 from mne import create_info
 from mne.channels import make_standard_montage
 from mne.viz import plot_topomap
+import streamlit as st
 
 def plot_trial(trial, ch_names=None):
     time = np.arange(trial.shape[0])
@@ -63,5 +64,6 @@ def plot_topomap_class_difference(X, y, class_a, class_b, compute_band_power, ba
     fig.colorbar(im, cax=cbar_ax).set_label("Power Difference (A - B)")
     fig.suptitle(f"{title_prefix}: {class_a} vs {class_b}", fontsize=14)
     plt.tight_layout(rect=[0, 0, 0.9, 1])
-    plt.show()
+    fig = plt.gcf()
+    st.pyplot(fig)
 
