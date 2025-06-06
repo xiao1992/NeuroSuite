@@ -39,7 +39,6 @@ class EEGPipeline:
         return self
     
     def fit(self):
-        # Normalize and map model names
         name_map = {
             "svm": "svm",
             "randomforest": "rf",
