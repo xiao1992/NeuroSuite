@@ -1,5 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from mne import create_info
+from mne.channels import make_standard_montage
+from mne.viz import plot_topomap
 
 def plot_trial(trial, ch_names=None):
     time = np.arange(trial.shape[0])
@@ -11,13 +14,6 @@ def plot_trial(trial, ch_names=None):
     plt.grid(True)
     plt.tight_layout()
     plt.show()
-
-
-import numpy as np
-import matplotlib.pyplot as plt
-from mne import create_info
-from mne.channels import make_standard_montage
-from mne.viz import plot_topomap
 
 def plot_topomap_class_difference(X, y, class_a, class_b, compute_band_power, bands, sfreq=250, ch_names=None, title_prefix="Topomap", vlim=0.03):
     if ch_names is None:
