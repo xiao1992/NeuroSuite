@@ -1,4 +1,3 @@
-
 import numpy as np
 from scipy.signal import welch
 
@@ -8,7 +7,6 @@ class EEGFeatures:
         self.fs = 128 
 
     def transform(self, X):
-        # Input X: shape (samples, time, channels)
         all_features = []
         for trial in X:
             trial_features = []
@@ -19,7 +17,6 @@ class EEGFeatures:
         return np.array(all_features)
 
     def band_power(self, psd, freqs):
-        # Define bands
         bands = {
             'delta': (0.5, 4),
             'theta': (4, 8),
