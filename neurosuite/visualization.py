@@ -2,9 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def plot_trial(trial, ch_names=None):
-    """
-    trial: (time, channels)
-    """
     time = np.arange(trial.shape[0])
     plt.figure(figsize=(10, 6))
     for i in range(trial.shape[1]):
