@@ -5,14 +5,12 @@ from neurosuite.datasets import load_dataset, load_custom_single, load_custom_mu
 st.set_page_config(page_title="NeuroSuite GUI", layout="wide")
 st.title("🧠 NeuroSuite: EEG Processing & Modeling")
 
-# Sidebar options
 st.sidebar.header("Configuration")
 dataset = st.sidebar.selectbox("Select Dataset", ["DEAP", "SEED", "OpenNeuro", "Custom Single File", "Custom Multi-File"])
 model = st.sidebar.selectbox("Select Model", ["svm", "rf", "xgb"])
 cross_subject = st.sidebar.checkbox("Cross-subject evaluation", value=True)
 use_coral = st.sidebar.checkbox("Use CORAL adaptation", value=False)
 
-# Upload blocks
 uploaded_file = None
 uploaded_files = []
 meta_file = None
